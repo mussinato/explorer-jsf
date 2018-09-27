@@ -38,7 +38,7 @@ public class EditarBean {
 		if(cookies != null){
 		  for(Cookie cookie: cookies){
 		    if(cookie.getName().equals(id)){
-		      caminho = cookie.getValue();
+		      caminho = cookie.getValue().replace("#", "\\");
 		    }
 		  }
 		}

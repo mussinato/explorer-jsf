@@ -46,16 +46,24 @@ public class DiretorioBean {
 	private List<Documento> documentos = new ArrayList<>();
 	private TreeNode selectedNode;
 	private String diretorioAtual;
+	private String diretorioRoot;
 	private StreamedContent arquivoParaDownload;
 	private String nomeNovaPasta;
 	private String nomeNovoArquivo;
 
 	public DiretorioBean() {
+		if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
+			diretorioRoot = "C:"+File.separator;
+			diretorioAtual = "C:"+File.separator;
+		} else {
+			diretorioRoot = "/";
+			diretorioAtual = "/";
+		}
 		listar();
 	}
 
 	public void listar() {
-		root = new DefaultTreeNode(new Documento("/", true, "/", null, null), null);
+		root = new DefaultTreeNode(new Documento(diretorioAtual, true, diretorioAtual, null, null), null);
 		listarDiretorios(root);
 		documentos = buscarDocumentos(diretorioAtual, false);
 	}
@@ -168,8 +176,8 @@ public class DiretorioBean {
 
 	public MenuModel getBreadCrumbModel() {
 		MenuModel model = new DefaultMenuModel();
-		addItemToMenuModel(model, 0, "root", "/", false);
-		String[] caminhos = diretorioAtual.split(File.separator);
+		addItemToMenuModel(model, 0, "root", diretorioRoot, false);
+		String[] caminhos = diretorioAtual.replace(File.separator, "#").split("#");
 		String breadcrump = "";
 		int count = 0;
 		for (String s : caminhos) {
@@ -203,7 +211,7 @@ public class DiretorioBean {
 		String hashMd5 = toMd5(time);
 
 		FacesContext context = FacesContext.getCurrentInstance();
-		Cookie cookie = new Cookie(hashMd5, documentoSelecionado.getCaminho());
+		Cookie cookie = new Cookie(hashMd5, documentoSelecionado.getCaminho().replace("\\","#"));
 		cookie.setMaxAge(-1);
 		((HttpServletResponse) context.getExternalContext().getResponse()).addCookie(cookie);
 
