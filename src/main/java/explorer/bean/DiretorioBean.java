@@ -1,4 +1,4 @@
-package explorer;
+package explorer.bean;
 
 import java.io.File;
 import java.io.FileInputStream;
