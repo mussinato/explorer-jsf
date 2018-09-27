@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>EXPLORER</title>
+	<h:outputStylesheet library="css" name="style.css" />
+</h:head>
+<h:body>
+	<h:form>
+		<p:growl id="mensagens" showDetail="false" />
+		<p:layout fullPage="true">
+			<p:layoutUnit position="north" >
+				<div class="titulo ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+					EXPLORER
+				</div>
+			</p:layoutUnit>
+		
+		    <p:layoutUnit position="west" resizable="true" size="300" maxSize="500" style="height: 100%">
+		        <p:tree value="#{diretorioBean.root}" var="doc" id="tree" animate="true" dynamic="true"
+		        	selectionMode="single" selection="#{diretorioBean.selectedNode}">
+					<p:ajax event="expand" update="tree" listener="#{diretorioBean.onNodeExpand}" />
+		        	<p:ajax event="select" update=":#{p:component('lista')} :#{p:component('breadcrumb')}" listener="#{diretorioBean.onNodeSelect}" />
+        
+					<p:treeNode expandedIcon="ui-icon-folder-open"
+						collapsedIcon="ui-icon-folder-collapsed">
+						<h:outputText value="#{doc.nome}" />
+					</p:treeNode>
+				</p:tree>
+		    </p:layoutUnit>
+		 
+		    <p:layoutUnit position="center" id="center">
+		    	<p:breadCrumb model="#{diretorioBean.breadCrumbModel}" id="breadcrumb" />
+		    	<p:dataTable var="doc" value="#{diretorioBean.documentos}" id="lista" sortBy="#{doc.nome}"
+		        	selection="#{diretorioBean.documentoSelecionado}" selectionMode="single" rowKey="#{doc.nome}">
+		        	<p:ajax event="rowDblselect" listener="#{diretorioBean.onRowDblClckSelect}" update=":#{p:component('breadcrumb')} :#{p:component('lista')}"  />
+		        	<p:ajax event="rowSelect" update=":#{p:component('toolbar')}"  />
+		        	
+		        	<f:facet name="header">
+		        		
+				        <p:toolbar id="toolbar">
+					        <f:facet name="left">
+					            <p:commandButton value="Voltar" icon="fa fa-chevron-left" actionListener="#{diretorioBean.voltar}" update=":#{p:component('breadcrumb')} :#{p:component('lista')}" />
+					 			<span class="ui-separator">
+					                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+					            </span>
+					 			<p:commandButton value="Nova Pasta" icon="fa fa-folder" onclick="PF('dlg').show();" />
+					 
+					            <p:commandButton value="Novo Arquivo" icon="fa fa-file" onclick="PF('dlg2').show();" />
+					 
+					            <span class="ui-separator">
+					                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+					            </span>
+					 
+					            <p:commandButton ajax="false" title="Download" icon="fa fa-download" disabled="#{diretorioBean.documentoSelecionado.diretorio}">
+					            	<p:fileDownload value="#{diretorioBean.arquivoParaDownload}" />
+					            </p:commandButton>
+					            <p:commandButton title="Upload" icon="fa fa-upload" />
+					            
+					            <span class="ui-separator">
+					                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+					            </span>
+					            
+					            <p:commandButton title="Deletar" icon="fa fa-trash" actionListener="#{diretorioBean.deletar}" update="lista :#{p:component('mensagens')}">
+					            	<p:confirm header="Confirmation" message="Deseja realmente excluir?" icon="ui-icon-alert" />
+					            </p:commandButton>
+					            <p:commandButton title="Editar" icon="fa fa-edit" actionListener="#{diretorioBean.editar}"
+					            	disabled="#{diretorioBean.documentoSelecionado.diretorio}">
+					            </p:commandButton>
+					            
+					            <span class="ui-separator">
+					                <span class="ui-icon ui-icon-grip-dotted-vertical" />
+					            </span>
+					            
+					            <p:commandButton title="Atualizar" icon="fa fa-refresh" actionListener="#{diretorioBean.atualizar}" update="lista :#{p:component('mensagens')}" />
+					        </f:facet>
+					    </p:toolbar>
+				    </f:facet>
+		        	
+				    <p:column headerText="Nome" sortBy="#{doc.nome}" >
+				    	<h:outputText styleClass="fa fa-folder" style="margin-right:10px;" rendered="#{doc.diretorio}" />
+				    	<h:outputText styleClass="fa fa-file-o" style="margin-right:10px;" rendered="#{!doc.diretorio}" />
+				    	<h:outputText value="#{doc.nome}" />
+					</p:column>
+				 
+				    <p:column headerText="Tamanho" sortBy="#{doc.tamanho}">
+				    	<h:outputText value="#{doc.tamanho} Kb" />
+				    </p:column>
+				 
+				 	<p:column headerText="Última Modificação" sortBy="#{doc.ultimaModificacao}">
+				        <h:outputText value="#{doc.ultimaModificacao}">
+				        	<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+				        </h:outputText>
+				    </p:column>
+				</p:dataTable>
+		    </p:layoutUnit>
+		</p:layout>
+		
+		<p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+	        <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+	        <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+	    </p:confirmDialog>
+	    
+	    <p:dialog header="Nova Pasta" widgetVar="dlg" focus="name" resizable="false" modal="true">
+	        <h:panelGrid columns="2">
+	            <h:outputLabel for="name" value="Nome:" />
+	            <p:inputText id="name" label="name" value="#{diretorioBean.nomeNovaPasta}" />
+	        </h:panelGrid>
+	        <p:commandButton value="Criar" style="float: right;" actionListener="#{diretorioBean.novaPasta}" 
+	        	onclick="PF('dlg').hide();" update="lista mensagens" />
+	    </p:dialog>
+	    
+	    <p:dialog header="Novo Arquivo" widgetVar="dlg2" focus="name" resizable="false" modal="true">
+	        <h:panelGrid columns="2">
+	            <h:outputLabel for="nameArquivo" value="Nome:" />
+	            <p:inputText id="nameArquivo" label="nameArquivo" value="#{diretorioBean.nomeNovoArquivo}" />
+	        </h:panelGrid>
+	        <p:commandButton value="Criar" style="float: right;" actionListener="#{diretorioBean.novoArquivo}" 
+	        	onclick="PF('dlg2').hide();" update="lista mensagens" />
+	    </p:dialog>
+	</h:form>
+</h:body>
+</html>

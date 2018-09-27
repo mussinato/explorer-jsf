@@ -1,0 +1,40 @@
+html {
+	font-size: 13px;
+}
+
+.ui-tree {
+	border: 0px;
+	width: 100% !important; 
+}
+
+.ui-corner-all {
+    -webkit-border-radius: 0px; 
+    border-radius: 0px; 
+}
+
+.ui-tabs-panel {
+	padding: 0px !important;
+}
+
+.ui-corner-top {
+	-webkit-border-top-left-radius: 0px;
+    border-top-left-radius: 0px;
+    -webkit-border-top-right-radius: 0px;
+    border-top-right-radius: 0px; 
+}
+
+.ui-layout-unit-content {
+	padding: 0px !important;
+}
+
+.ui-layout-unit {
+	padding: 0px !important;
+}
+
+.ui-widget-header {
+	border: 0px !important;
+}
+
+.titulo {
+	padding: 10px;
+}
