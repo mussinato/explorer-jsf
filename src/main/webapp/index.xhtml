@@ -59,7 +59,7 @@
 					            <p:commandButton ajax="false" title="Download" icon="fa fa-download" disabled="#{diretorioBean.documentoSelecionado.diretorio}">
 					            	<p:fileDownload value="#{diretorioBean.arquivoParaDownload}" />
 					            </p:commandButton>
-					            <p:commandButton title="Upload" icon="fa fa-upload" />
+					            <p:commandButton title="Upload" icon="fa fa-upload" onclick="PF('dlgUpload').show();" />
 					            
 					            <span class="ui-separator">
 					                <span class="ui-icon ui-icon-grip-dotted-vertical" />
@@ -121,6 +121,14 @@
 	        </h:panelGrid>
 	        <p:commandButton value="Criar" style="float: right;" actionListener="#{diretorioBean.novoArquivo}" 
 	        	onclick="PF('dlg2').hide();" update="lista mensagens" />
+	    </p:dialog>
+	</h:form>
+	<h:form>
+		<p:dialog header="Upload" widgetVar="dlgUpload" resizable="false" modal="true" width="600" height="300">
+	        <p:fileUpload fileUploadListener="#{diretorioBean.handleFileUpload}" mode="advanced" dragDropSupport="true"
+                          update="messages" multiple="true" sequential="true" />
+ 
+    		<p:messages id="messages" showDetail="false" />
 	    </p:dialog>
 	</h:form>
 </h:body>

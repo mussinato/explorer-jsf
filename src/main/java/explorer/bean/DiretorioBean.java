@@ -3,8 +3,10 @@ package explorer.bean;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -23,6 +25,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.MenuActionEvent;
 import org.primefaces.event.NodeExpandEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -53,8 +56,8 @@ public class DiretorioBean {
 
 	public DiretorioBean() {
 		if (System.getProperty("os.name").toUpperCase().contains("WINDOWS")) {
-			diretorioRoot = "C:"+File.separator;
-			diretorioAtual = "C:"+File.separator;
+			diretorioRoot = "C:" + File.separator;
+			diretorioAtual = "C:" + File.separator;
 		} else {
 			diretorioRoot = "/";
 			diretorioAtual = "/";
@@ -165,13 +168,13 @@ public class DiretorioBean {
 			}
 		}
 	}
-	
+
 	public void irParaDiretorio(ActionEvent events) {
 		MenuActionEvent j = (MenuActionEvent) events;
 		DefaultMenuItem item = (DefaultMenuItem) j.getMenuItem();
-		Map mapa = item.getParams();
-		List param = (List) mapa.get("caminho");
-		documentos = buscarDocumentos((String)param.get(0), false);
+		Map<String, List<String>> mapa = item.getParams();
+		List<String> param = (List<String>) mapa.get("caminho");
+		documentos = buscarDocumentos((String) param.get(0), false);
 	}
 
 	public MenuModel getBreadCrumbModel() {
@@ -183,7 +186,7 @@ public class DiretorioBean {
 		for (String s : caminhos) {
 			breadcrump += s + File.separator;
 			if (s != null && !s.equals("")) {
-				count ++;
+				count++;
 				addItemToMenuModel(model, count, s, breadcrump, false);
 			}
 		}
@@ -211,7 +214,7 @@ public class DiretorioBean {
 		String hashMd5 = toMd5(time);
 
 		FacesContext context = FacesContext.getCurrentInstance();
-		Cookie cookie = new Cookie(hashMd5, documentoSelecionado.getCaminho().replace("\\","#"));
+		Cookie cookie = new Cookie(hashMd5, documentoSelecionado.getCaminho().replace("\\", "#"));
 		cookie.setMaxAge(-1);
 		((HttpServletResponse) context.getExternalContext().getResponse()).addCookie(cookie);
 
@@ -234,6 +237,22 @@ public class DiretorioBean {
 		Documento obj = (Documento) event.getObject();
 		if (obj.isDiretorio()) {
 			documentos = buscarDocumentos(obj.getCaminho(), false);
+		}
+	}
+
+	public void handleFileUpload(FileUploadEvent event) {
+		try {
+			File file = new File(diretorioAtual, event.getFile().getFileName());
+
+			OutputStream out = new FileOutputStream(file);
+			out.write(event.getFile().getContents());
+			out.close();
+
+			showMessage("Arquivos enviados com sucesso.", FacesMessage.SEVERITY_INFO);
+		} catch (IOException e) {
+			showMessage("Falha ao enviar o arquivo " + event.getFile().getFileName() + ": " + e.getMessage(),
+					FacesMessage.SEVERITY_ERROR);
+			e.printStackTrace();
 		}
 	}
 
