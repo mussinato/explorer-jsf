@@ -16,8 +16,8 @@ O explorer-jsf é um gerenciador de arquivos baseado na web.
 * segurança com login e senha
 
 ## Instalação
-1. Instale o JDK 8 ou superior
-2. Instale um servidor de aplicação (ex. Tomcat)
+1. Instale o [JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html) ou superior
+2. Instale um servidor de aplicação (ex. [Tomcat](http://tomcat.apache.org/))
 3. Clone o projeto em um diretório do seu computador
 4. Ultilize o maven para compilar o projeto e gerar o pacote: `mvn clean package`
 5. Copie o arquivo explorer.war gerado para o servidor de aplicação
