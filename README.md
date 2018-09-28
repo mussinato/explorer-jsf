@@ -1,4 +1,4 @@
-# explorer-jsf
+# explorer-jsf [![Build Status](https://travis-ci.org/mussinato/explorer-jsf.svg?branch=master)](https://travis-ci.org/mussinato/explorer-jsf)
 O explorer-jsf é um gerenciador de arquivos baseado na web. 
 
 ## Características
