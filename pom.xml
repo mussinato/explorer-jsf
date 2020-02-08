@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.mussinato</groupId>
 	<artifactId>explorer</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>war</packaging>
 	<dependencies>
 		<dependency>
@@ -54,7 +54,7 @@
 		</repository>
 	</repositories>
 	<build>
-		<finalName>explorer</finalName>
+		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
